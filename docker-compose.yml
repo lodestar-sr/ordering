@@ -1,0 +1,41 @@
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      - "MYSQL_DATABASE=problemthree"
+      - "MYSQL_USER=user01"
+      - "MYSQL_PASSWORD=123456"
+      - "MYSQL_ROOT_PASSWORD=ourrootpass"
+    ports:
+      - "3306:3306"
+
+  adminer: 
+    image: adminer
+    ports: 
+      - "8080:8080"
+
+  server-app:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    environment:
+      - "DB_PORT=3306"
+      - "DB_HOST=db"
+      - "DB_DATABASE=problemthree"
+      - "DB_USERNAME=user01"
+      - "DB_PASSWORD=123456"
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
+
+  client-app:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+volumes:
+  db_data:
